@@ -287,8 +287,8 @@ class PatchDataProvider(AbstractThreadedDataProvider):
         # Get the next batch
         x, t = self.provider.current()
 
-        new_x = np.empty((x.shape[0], x.shape[1], *self.patch_size), dtype='float32')
-        new_t = np.empty((t.shape[0], *self.patch_size), dtype='int32')
+        new_x = np.empty((x.shape[0], x.shape[1], self.patch_size[0], self.patch_size[1]), dtype='float32')
+        new_t = np.empty((t.shape[0], self.patch_size[0], self.patch_size[1]), dtype='int32')
 
         # Sample patches
         for i in range(x.shape[0]):
