@@ -115,22 +115,22 @@ class VerboseTimer(Timer):
 
         :param text: The title of the block.
         """
-        super().__init__()
+        super(VerboseTimer,self).__init__()
         self.text = text
 
     def __enter__(self):
         """
         Enters the critical section whose runtime is measured.
         """
-        super().__enter__()
-        print("%s..." % self.text, end="", flush=True)
+        super(VerboseTimer,self).__enter__()
+        print("%s..." % self.text)
         return self
 
     def __exit__(self, *args):
         """
         Leaves the critical section.
         """
-        super().__exit__(*args)
+        super(VerboseTimer,self).__exit__(*args)
         print(" [%.2fs]" % self.interval)
 
 
@@ -210,14 +210,14 @@ def print_conf_matrix(conf_matrix, target_names, num_labels):
         colors = ["on_blue", "on_cyan", "on_green", "on_yellow", "on_red"]
         for i in range(len(colors)):
             if f <= (i + 1) * 1 / len(colors):
-                print(colored(" %1.2f " % f, "white", colors[i]), end="")
+                print(colored(" %1.2f " % f, "white", colors[i]))
                 break
 
     def print_num_value2(f):
         colors = ["on_blue", "on_cyan", "on_green", "on_yellow", "on_red"]
         for i in range(len(colors)):
             if f <= (i + 1) * 1 / len(colors):
-                print(colored(" %04.1f " % (f * 100), "white", colors[i]), end="")
+                print(colored(" %04.1f " % (f * 100), "white", colors[i]))
                 break
 
     # Compute the IoU score per class
@@ -235,9 +235,9 @@ def print_conf_matrix(conf_matrix, target_names, num_labels):
 
     # Print the matrix
     for i in range(num_labels):
-        print("%13s | " % (target_names[i],), end="")
+        print("%13s | " % (target_names[i],))
         print_num_value2(class_iou[i])
-        print(" | ", end="")
+        print(" | ")
 
         for j in range(num_labels):
             print_num_value2(cm_normalized[i, j])
@@ -247,7 +247,7 @@ def print_conf_matrix(conf_matrix, target_names, num_labels):
         total_length = 13 + 2 + 4 + 4 + 19* (4 + 0)
 
         for k in range(total_length):
-            print("-", end="")
+            print("-")
         print("")
         """
 
