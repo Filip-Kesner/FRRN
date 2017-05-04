@@ -130,6 +130,8 @@ def compile_grad_functions(split_outputs, param_blocks, input_vars, loss, givens
 
 
 def compute_grads(grad_fns, param_blocks, *args):
+    raise RuntimeError("Tomas Cernik - needs fix!") 
+
     """
     Computes the gradients block wise.
     """
@@ -138,7 +140,8 @@ def compute_grads(grad_fns, param_blocks, *args):
 
     # Compute the first iteration
     i = len(grad_fns) - 1
-    result = grad_fns[i](*args, *prev)
+#    TODO: FIX!
+#    result = grad_fns[i](*args, *prev)
     loss = result[0]
     result = result[1:]
 
@@ -147,7 +150,8 @@ def compute_grads(grad_fns, param_blocks, *args):
     acc_grads[len(grad_fns) - 1 - i] = current[::-1]
 
     for i in range(len(grad_fns) - 2, -1, -1):
-        result = grad_fns[i](*args, *prev)
+#        TODO: FIX!
+#        result = grad_fns[i](*args, *prev)
 
         current = result[:len(param_blocks[i])]
         prev = result[len(param_blocks[i]):]
