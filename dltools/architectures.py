@@ -73,11 +73,25 @@ class AbstractBuilder(object):
         :param x: The input tenser
         :return: The output tensor (normalized)
         """
-        x = theano.sandbox.cuda.basic_ops.gpu_contiguous(x)
-        return theano.sandbox.cuda.dnn.GpuDnnSoftmax(tensor_format='bc01', algo="accurate", mode="channel")(x)
+	e_x = theano.tensor.exp(x - x.max(axis=1, keepdims=True))
+	return e_x / e_x.sum(axis=1, keepdims=True)
+
+        # ORIGINAL CODE:
+        #x = theano.sandbox.cuda.basic_ops.gpu_contiguous(x)
+        #return theano.sandbox.cuda.dnn.GpuDnnSoftmax(tensor_format='bc01', algo="accurate", mode="channel")(x)
 
     @staticmethod
     def log_softmax_4d(x):
+        shape = x.shape
+        x_3d = x.reshape((shape[0], shape[1], -1))
+        m = T.max(x_3d, axis = 1, keepdims = True)
+        rebased_x = x_3d - m
+        lsm_3d = rebased_x - T.log(T.sum(T.exp(rebased_x), axis = 1 , keepdims = True))
+        lsm_4d = lsm_3d.reshape(x.shape)
+        return lsm_4d
+
+        # ORIGINAL FUNCTION:
+
         """
         Softmax function in 4d. We assume the following layout: (batch, classes, height, width). Hence, we normalize
         over the classes.
@@ -85,8 +99,8 @@ class AbstractBuilder(object):
         :param x: The input tenser
         :return: The output tensor (normalized)
         """
-        x = theano.sandbox.cuda.basic_ops.gpu_contiguous(x)
-        return theano.sandbox.cuda.dnn.GpuDnnSoftmax(tensor_format='bc01', algo="log", mode="channel")(x)
+        # x = theano.sandbox.cuda.basic_ops.gpu_contiguous(x)
+        # return theano.sandbox.cuda.dnn.GpuDnnSoftmax(tensor_format='bc01', algo="log", mode="channel")(x)
 
 
 class AbstractFRRNBuilder(AbstractBuilder):
@@ -102,7 +116,7 @@ class AbstractFRRNBuilder(AbstractBuilder):
         :param lanes: The number of autobahn lanes.
         :param multiplier: The channel multiplier.
         """
-        super().__init__(**kwargs)
+        super(AbstractFRRNBuilder,self).__init__(**kwargs)
 
         self.base_channels = base_channels
         self.lanes = lanes
